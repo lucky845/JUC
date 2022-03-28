@@ -1,8 +1,5 @@
 package com.atguigu.part01.interview;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 /**
  * @author lucky845
  * @date 2022年03月28日 20:36
@@ -15,25 +12,16 @@ public class Test01 {
      */
 
     public static void main(String[] args) {
-
         Business business = new Business();
-
         // 整体循环5次
         for (int j = 0; j < 5; j++) {
             // 子线程1执行2次
-            for (int i = 0; i < 2; i++) {
-                business.child1();
-            }
+            new Thread(business::child1).start();
             // 子线程2执行2次
-            for (int i = 0; i < 2; i++) {
-                business.child2();
-            }
+            new Thread(business::child2).start();
             // 主线程1执行3次
-            for (int i = 0; i < 3; i++) {
-                business.main();
-            }
+            new Thread(business::main).start();
         }
-
     }
 
 }
@@ -43,32 +31,50 @@ public class Test01 {
  */
 class Business {
 
-    Lock lock1 = new ReentrantLock();
-    Lock lock2 = new ReentrantLock();
-    Lock lock3 = new ReentrantLock();
+    // 标记执行者
+    private int flag = 1;
 
-    public void child1() {
-        synchronized (lock1) {
-            lock2.lock();
+    public synchronized void child1() {
+        for (int i = 0; i < 2; i++) {
+            while (flag != 1) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             System.out.println("子线程1执行");
-            lock2.unlock();
         }
+        flag = 2;
     }
 
-    public void child2() {
-        synchronized (lock2) {
-            lock3.lock();
+    public synchronized void child2() {
+        for (int i = 0; i < 2; i++) {
+            while (flag != 2) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             System.out.println("子线程2执行");
-            lock3.unlock();
         }
+        flag = 3;
+
     }
 
-    public void main() {
-        synchronized (lock3) {
-            lock1.lock();
+    public synchronized void main() {
+        for (int i = 0; i < 3; i++) {
+            while (flag != 3) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             System.out.println("主线程执行");
-            lock1.unlock();
         }
+        flag = 1;
     }
 
 }
