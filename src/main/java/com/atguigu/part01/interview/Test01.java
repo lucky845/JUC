@@ -46,6 +46,7 @@ class Business {
             System.out.println("子线程1执行");
         }
         flag = 2;
+        notify();
     }
 
     public synchronized void child2() {
@@ -60,7 +61,7 @@ class Business {
             System.out.println("子线程2执行");
         }
         flag = 3;
-
+        notify();
     }
 
     public synchronized void main() {
@@ -75,6 +76,7 @@ class Business {
             System.out.println("主线程执行");
         }
         flag = 1;
+        notify();
     }
 
 }
