@@ -8,6 +8,7 @@ public class Test01_ConcurrencyTest {
 
     /**
      * 执行次数
+     * 执行次数较小时，并发比单线程慢
      */
     private static final long count = 1000001L;
 
