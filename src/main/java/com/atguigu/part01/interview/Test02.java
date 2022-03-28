@@ -30,6 +30,7 @@ public class Test02 {
                     }
                     System.out.println("i = " + i);
                     container.add(i);
+                    container.notify();
                 }
             }
         }, "线程1").start();
@@ -44,13 +45,9 @@ public class Test02 {
                     }
                 }
                 container.size();
-                container.notifyAll();
+                container.notify();
             }
         }, "线程2").start();
-
-        while (container.list.size() == 5){
-            System.exit(0);
-        }
 
     }
 
